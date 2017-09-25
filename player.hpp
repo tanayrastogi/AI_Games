@@ -19,7 +19,7 @@ public:
     ///\return the next state the board is in after our move
     GameState play(const GameState &pState, const Deadline &pDue);
 
-    int minimax(const GameState &state, uint8_t player);
+    int minimax(const GameState &state, uint8_t player, int depth);
     int evaluation(const GameState &state);
 };
 

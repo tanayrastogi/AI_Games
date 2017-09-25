@@ -12,6 +12,7 @@ GameState Player::play(const GameState &pState,const Deadline &pDue)
     std::cerr << "Processing " << pState.toMessage() << std::endl;
 
     int sum = 0;
+    int deep = 0;
     std::vector<GameState> lNextStates;
 
 
@@ -24,8 +25,11 @@ GameState Player::play(const GameState &pState,const Deadline &pDue)
      * next state. This skeleton returns a random move instead.
      */
 
-     sum = minimax(pState, pState.getNextPlayer(), 10);
+
+     deep = 3;
+     sum = minimax(pState, pState.getNextPlayer(), deep);
      std::cerr << "\nThe sum value is: "<< sum << std::endl;
+     std::cerr<<"\nIterations Node:"<<iter<< std::endl;
 
 
 
@@ -49,8 +53,7 @@ int Player::minimax(const GameState &state, uint8_t player, int depth)
     // If terminal state, then give back the evaluation sum
     if (childStates.size() == 0 || depth == 0)
     {
-//        iter++;
-//        std::cerr<<"\nTerminal Node:"<<iter;
+        iter++;
         eval = evaluation(state);
         return eval;
     }
@@ -67,7 +70,7 @@ int Player::minimax(const GameState &state, uint8_t player, int depth)
             {
                 v = minimax(childStates[i], CELL_O, depth - 1);
                 bestPossible = std::max(bestPossible, v);
-                std::cerr<<"\nThe best possible for X is: "<<bestPossible;
+//                std::cerr<<"\nThe best possible for X is: "<<bestPossible;
             }
             return bestPossible;
         }
@@ -80,7 +83,7 @@ int Player::minimax(const GameState &state, uint8_t player, int depth)
             {
                 v = minimax(childStates[i], CELL_X, depth - 1);
                 bestPossible = std::min(bestPossible, v);
-                std::cerr<<"\nThe best possible for O is: "<<bestPossible;
+//                std::cerr<<"\nThe best possible for O is: "<<bestPossible;
             }
             return bestPossible;
         }
@@ -114,178 +117,163 @@ int Player::evaluation(const GameState &state)
 
     */
 
-    int score = 0;
-    int num = 0;  // To check how many X or O are there in a line
+    /** Problem with the above method that it cannot check for
+    3 consecutive X. It will give them same score to all 3 X
+    Have to change to give more weight to consecutive X
+    */
 
-    // Next Player
-    uint8_t player = state.getNextPlayer();
+    int score = 0; // Total score of the evaluation function
 
-    // Checking for X
-    if(player == CELL_X)
+    int num_x = 0;  // To check how many X
+    int num_o = 0;  // To check how many O
+
+
+
+    // Row-wise check
+    for(int i = 0; i<4; i++)
     {
-        // Row-wise check
-        for(int i = 0; i<4; i++)
+        num_x = 0;
+        num_o = 0;
+        for(int j = 0; j<4; j++)
         {
-            num = 0;
-            for(int j = 0; j<4; j++)
-            {
-                // Checking how many X are there in each row
-                if(state.at(i, j) == CELL_X)
-                    num++;
-            }
-            // Calculation of score
-            if(num == 3)
-                score += 100*num;
-            else if(num == 2)
-                score += 10*num;
-            else if(num == 1)
-                score += 1*num;
+            // Checking how many X are there in each row
+            if(state.at(i, j) == CELL_X)
+                num_x++;
+            // Checking how many O are there in each column
+            if(state.at(i, j)== CELL_O)
+                num_o++;
         }
-        // Make num again to zero so as to use it for column-wise check
-        num = 0;
 
-
-        // Column-wise check
-        for(int i = 0; i<4; i++)
-        {
-            num = 0;
-            for(int j = 0; j<4; j++)
-            {
-                // Checking how many X are there in each column
-                if(state.at(j, i) == CELL_X)
-                    num++;
-            }
-            // Calculation of score
-            if(num == 3)
-                score += 100*num;
-            else if(num == 2)
-                score += 10*num;
-            else if(num == 1)
-                score += 1*num;
-        }
-        // Make num again to zero so as to use it for diagonal-wise check
-        num = 0;
-
-        // Diagonal-wise check
-        for(int i = 0; i<4; i++)
-        {
-            // Checking how many X are there in diagonal
-            if(state.at(i, i) == CELL_X)
-                num++;
-         }
-         // Calculation of score
-        if(num == 3)
-            score += 100*num;
-        else if(num == 2)
-            score += 10*num;
-        else if(num == 1)
-            score += 1*num;
-
-        // Make num again to zero so as to use it for diagonal-wise check
-        num = 0;
-
-
-        // Off Diagonal check
-        for(int i = 0; i<4; i++)
-        {
-            // Checking how many X are there in diagonal
-            if(state.at(i, 3-i) == CELL_X)
-                num++;
-        }
         // Calculation of score
-        if(num == 3)
-            score += 100*num;
-        else if(num == 2)
-            score += 10*num;
-        else if(num == 1)
-            score += 1*num;
+        if(num_x == 3)
+            score += 100;
+        else if(num_x == 2)
+            score += 10;
+        else if(num_x == 1)
+            score += 1;
 
+        if(num_o == 3)
+            score -= 100;
+        else if(num_o == 2)
+            score -= 10;
+        else if(num_o == 1)
+            score -= 1;
     }
+    // Make num again to zero so as to use again
+    num_o = 0;
+    num_x = 0;
 
 
 
 
-    // Checking for O
-    if(player == CELL_O)
+
+
+
+    // Column wise check
+    for(int i = 0; i<4; i++)
     {
-        // Row-wise check
-        for(int i = 0; i<4; i++)
+        num_x = 0;
+        num_o = 0;
+        for(int j = 0; j<4; j++)
         {
-            num = 0;
-            for(int j = 0; j<4; j++)
-            {
-                // Checking how many X are there in each row
-                if(state.at(i, j) == CELL_X)
-                    num++;
-            }
-            // Calculation of score
-            if(num == 3)
-                score -= 100*num;
-            else if(num == 2)
-                score -= 10*num;
-            else if(num == 1)
-                score -= 1*num;
+            // Checking how many X are there in each row
+            if(state.at(j, i) == CELL_X)
+                num_x++;
+            // Checking how many O are there in each column
+            if(state.at(j, j)== CELL_O)
+                num_o++;
         }
-        // Make num again to zero so as to use it for column-wise check
-        num = 0;
 
-
-        // Column-wise check
-        for(int i = 0; i<4; i++)
-        {
-            num = 0;
-            for(int j = 0; j<4; j++)
-            {
-                // Checking how many X are there in each column
-                if(state.at(j, i) == CELL_X)
-                    num++;
-            }
-            // Calculation of score
-            if(num == 3)
-                score -= 100*num;
-            else if(num == 2)
-                score -= 10*num;
-            else if(num == 1)
-                score -= 1*num;
-        }
-        // Make num again to zero so as to use it for diagonal-wise check
-        num = 0;
-
-        // Diagonal-wise check
-        for(int i = 0; i<4; i++)
-        {
-            // Checking how many X are there in diagonal
-            if(state.at(i, i) == CELL_X)
-                num++;
-         }
-         // Calculation of score
-        if(num == 3)
-            score -= 100*num;
-        else if(num == 2)
-            score -= 10*num;
-        else if(num == 1)
-            score -= 1*num;
-
-        // Make num again to zero so as to use it for diagonal-wise check
-        num = 0;
-
-
-        // Off Diagonal check
-        for(int i = 0; i<4; i++)
-        {
-            // Checking how many X are there in diagonal
-            if(state.at(i, 3-i) == CELL_X)
-                num++;
-        }
         // Calculation of score
-        if(num == 3)
-            score -= 100*num;
-        else if(num == 2)
-            score -= 10*num;
-        else if(num == 1)
-            score -= 1*num;
+        if(num_x == 3)
+            score += 100;
+        else if(num_x == 2)
+            score += 10;
+        else if(num_x == 1)
+            score += 1;
 
+        if(num_o == 3)
+            score -= 100;
+        else if(num_o == 2)
+            score -= 10;
+        else if(num_o == 1)
+            score -= 1;
     }
+    // Make num again to zero so as to use again
+    num_o = 0;
+    num_x = 0;
+
+
+
+
+
+
+
+
+    // Left diagonal check
+    for(int i = 0; i<4; i++)
+    {
+        // Checking how many X are there in diagonal
+        if(state.at(i, i) == CELL_X)
+            num_x++;
+        // Checking how many O are there in diagonal
+        if(state.at(i, i)== CELL_O)
+            num_o++;
+    }
+    // Calculation of score
+    if(num_x == 3)
+        score += 100;
+    else if(num_x == 2)
+        score += 10;
+    else if(num_x == 1)
+        score += 1;
+
+    if(num_o == 3)
+        score -= 100;
+    else if(num_o == 2)
+        score -= 10;
+    else if(num_o == 1)
+        score -= 1;
+
+    // Make num again to zero so as to use again
+    num_o = 0;
+    num_x = 0;
+
+
+
+
+
+
+
+
+    // Right diagonal check
+    for(int i = 0; i<4; i++)
+    {
+        // Checking how many X are there in diagonal
+        if(state.at(i, 3-i) == CELL_X)
+            num_x++;
+        // Checking how many O are there in diagonal
+        if(state.at(i, 3-i)== CELL_O)
+            num_o++;
+    }
+    // Calculation of score
+    if(num_x == 3)
+        score += 100;
+    else if(num_x == 2)
+        score += 10;
+    else if(num_x == 1)
+        score += 1;
+
+    if(num_o == 3)
+        score -= 100;
+    else if(num_o == 2)
+        score -= 10;
+    else if(num_o == 1)
+        score -= 1;
+
+
+
+
 
     return score;
 }
