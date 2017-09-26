@@ -36,8 +36,8 @@ GameState Player::play(const GameState &pState,const Deadline &pDue)
         {
             bestValue = v;
             bestState = lNextStates[i];
-            std::cerr<<"\nThe best state is at position: "<<i;
-            std::cerr<<"\nThe best value for state: "<<bestValue << std::endl;
+//            std::cerr<<"\nThe best state is at position: "<<i;
+//            std::cerr<<"\nThe best value for state: "<<bestValue << std::endl;
         }
     }
 
@@ -98,17 +98,20 @@ int Player::evaluation(const GameState &state)
 {
     /** Evaluation function: Search for the number of X or O in a line.
     for X (MAX_turn),
-    +100 points for 3-in-line
-     +10 points for 2-in-line
-      +1 points for 1-in line
+    +1000 points for 4-in-line
+     +100 points for 3-in-line
+      +10 points for 2-in-line
+       +1 points for 1-in line
     for O (MIN_turn),
-    -100 points for 3-in-line
-     -10 points for 2-in-line
-      -1 points for 1-in line
+    -1000 points for 4-in-line
+     -100 points for 3-in-line
+      -10 points for 2-in-line
+       -1 points for 1-in line
 
     Sum the score for all possible lines.
     Check for all rows, column, and diagonals.
     4-rows, 4-column, 2-diagonal
+    and return that
 
  *    col 0  1  2  3
  * row  ---------------
