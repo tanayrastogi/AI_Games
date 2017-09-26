@@ -1,60 +1,66 @@
 #include "player.hpp"
 #include <cstdlib>
 #include <algorithm>
-
-int iter = 0;
+#include <math.h>
 
 namespace TICTACTOE
 {
 
 GameState Player::play(const GameState &pState,const Deadline &pDue)
 {
-    std::cerr << "Processing " << pState.toMessage() << std::endl;
-
-    int sum = 0;
-    int deep = 0;
+    int v = 0;
+    int depth = 3;
+    int bestValue = 0;
     std::vector<GameState> lNextStates;
+    GameState bestState;
+
+    // Define max and min player
+    max_p = pState.getNextPlayer();
+    min_p = max_p ^ (CELL_X | CELL_O);
 
 
-
+    // Finds all the possible children states
     pState.findPossibleMoves(lNextStates);
-    if (lNextStates.size() == 0) return GameState(pState, Move());
-
-    /*
-     * Here you should write your clever algorithms to get the best next move, ie the best
-     * next state. This skeleton returns a random move instead.
-     */
 
 
-     deep = 3;
-     sum = minimax(pState, pState.getNextPlayer(), deep);
-     std::cerr << "\nThe sum value is: "<< sum << std::endl;
-     std::cerr<<"\nIterations Node:"<<iter<< std::endl;
+    // If the state is a terminal state then
+    if (lNextStates.size() == 0)
+        return GameState(pState, Move());
+
+    // Otherwise running Minimax for max player
+    bestValue = -1000000;
+    for(unsigned int i = 0; i<lNextStates.size(); i++)
+    {
+        v = minimax(lNextStates[i], min_p, depth - 1);
+        if(v > bestValue)
+        {
+            bestValue = v;
+            bestState = lNextStates[i];
+            std::cerr<<"\nThe best state is at position: "<<i;
+            std::cerr<<"\nThe best value for state: "<<bestValue << std::endl;
+        }
+    }
 
 
-
-    return lNextStates[rand() % lNextStates.size()];
+    return bestState;
+//    return lNextStates[rand() % lNextStates.size()];
 }
-
 
 int Player::minimax(const GameState &state, uint8_t player, int depth)
 {
     int bestPossible;
     int v;
-    int eval = 0;
     std::vector<GameState> childStates;
-    std::vector<GameState>::iterator it;
+//    std::vector<GameState>::iterator it;
 
-    // Fins all the possible children states
+    // Finds all the possible children states
     state.findPossibleMoves(childStates);
-//    std::cerr<<"\nNumber of children for state:"<<childStates.size();
 
 
-    // If terminal state, then give back the evaluation sum
+    // If terminal state or the depth , then give back the evaluation sum
     if (childStates.size() == 0 || depth == 0)
     {
-        iter++;
-        eval = evaluation(state);
+        int eval = evaluation(state);
         return eval;
     }
 
@@ -62,28 +68,26 @@ int Player::minimax(const GameState &state, uint8_t player, int depth)
     //Else for the children for the state
     else
     {
-        // For Player X we are maximizing
-        if (player == CELL_X)
+        // For Player max_p we are maximizing
+        if (player == max_p)
         {
             bestPossible = -1000000;
             for(unsigned int i = 0; i<childStates.size(); i++)
             {
-                v = minimax(childStates[i], CELL_O, depth - 1);
+                v = minimax(childStates[i], min_p, depth - 1);
                 bestPossible = std::max(bestPossible, v);
-//                std::cerr<<"\nThe best possible for X is: "<<bestPossible;
             }
             return bestPossible;
         }
 
-        // For Player O we are minimizing
+        // For Player min_p we are minimizing
         else
         {
             bestPossible = 1000000;
             for(unsigned int i = 0; i<childStates.size(); i++)
             {
-                v = minimax(childStates[i], CELL_X, depth - 1);
+                v = minimax(childStates[i], max_p, depth - 1);
                 bestPossible = std::min(bestPossible, v);
-//                std::cerr<<"\nThe best possible for O is: "<<bestPossible;
             }
             return bestPossible;
         }
@@ -145,14 +149,18 @@ int Player::evaluation(const GameState &state)
         }
 
         // Calculation of score
-        if(num_x == 3)
+        if(num_x == 4)
+            score += 1000;
+        else if(num_x == 3)
             score += 100;
         else if(num_x == 2)
             score += 10;
         else if(num_x == 1)
             score += 1;
 
-        if(num_o == 3)
+        if(num_o == 4)
+            score -=1000;
+        else if(num_o == 3)
             score -= 100;
         else if(num_o == 2)
             score -= 10;
@@ -185,14 +193,18 @@ int Player::evaluation(const GameState &state)
         }
 
         // Calculation of score
-        if(num_x == 3)
+        if(num_x == 4)
+            score += 1000;
+        else if(num_x == 3)
             score += 100;
         else if(num_x == 2)
             score += 10;
         else if(num_x == 1)
             score += 1;
 
-        if(num_o == 3)
+        if(num_o == 4)
+            score -=1000;
+        else if(num_o == 3)
             score -= 100;
         else if(num_o == 2)
             score -= 10;
@@ -221,14 +233,18 @@ int Player::evaluation(const GameState &state)
             num_o++;
     }
     // Calculation of score
-    if(num_x == 3)
+    if(num_x == 4)
+        score += 1000;
+    else if(num_x == 3)
         score += 100;
     else if(num_x == 2)
         score += 10;
     else if(num_x == 1)
         score += 1;
 
-    if(num_o == 3)
+    if(num_o == 4)
+        score -=1000;
+    else if(num_o == 3)
         score -= 100;
     else if(num_o == 2)
         score -= 10;
@@ -257,14 +273,18 @@ int Player::evaluation(const GameState &state)
             num_o++;
     }
     // Calculation of score
-    if(num_x == 3)
+    if(num_x == 4)
+        score += 1000;
+    else if(num_x == 3)
         score += 100;
     else if(num_x == 2)
         score += 10;
     else if(num_x == 1)
         score += 1;
 
-    if(num_o == 3)
+    if(num_o == 4)
+        score -=1000;
+    else if(num_o == 3)
         score -= 100;
     else if(num_o == 2)
         score -= 10;

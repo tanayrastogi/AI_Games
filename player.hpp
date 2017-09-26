@@ -17,8 +17,10 @@ public:
     ///\param pState the current state of the board
     ///\param pDue time before which we must have returned
     ///\return the next state the board is in after our move
-    GameState play(const GameState &pState, const Deadline &pDue);
+    uint8_t max_p;
+    uint8_t min_p;
 
+    GameState play(const GameState &pState, const Deadline &pDue);
     int minimax(const GameState &state, uint8_t player, int depth);
     int evaluation(const GameState &state);
 };
