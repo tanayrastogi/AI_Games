@@ -11,7 +11,7 @@ GameState Player::play(const GameState &pState,const Deadline &pDue)
     //std::cerr << "Processing " << pState.toMessage() << std::endl;
 	// Utility value
     int v;
-    int depth = 3;
+    int depth = 2;
     int alpha = -100000000;
     int beta  =  100000000;
 
@@ -22,6 +22,7 @@ GameState Player::play(const GameState &pState,const Deadline &pDue)
     std::vector<GameState> lNextStates;
     pState.findPossibleMoves(lNextStates);
 
+    std::cerr<<"\nNumber of possible states are: "<<lNextStates.size();
 
     // Define max and min player
     max_p = pState.getNextPlayer();
@@ -32,35 +33,18 @@ GameState Player::play(const GameState &pState,const Deadline &pDue)
 
     // Otherwise running alphabeta for max player
     int bestValue = -1000000;
-
     for(unsigned int i = 0; i<lNextStates.size(); i++)
     {
+        std::cerr<<"\nRunning the alpha beta";
         v = alphabeta(lNextStates[i], min_p, depth-1, alpha, beta);
         if(v > bestValue)
         {
             bestValue = v;
             bestState = lNextStates[i];
+            std::cerr<<"\nThe best value is: "<<bestValue;
+            std::cerr<<"\nThe best state is: "<<i;
         }
     }
-
-    /*
-    for(unsigned int i = 0; i<lNextStates.size(); i++)
-    {
-        v = std::max(v, alphabeta(lNextStates[i], min_p, depth-1, alpha, beta));
-        if(v > alpha)
-        {
-            alpha = v;
-            bestState = lNextStates[i];
-        }
-        // Prune if branch is not useful
-        if (beta<=alpha) break;
-
-    }*/
-
-    /*
-     * Here you should write your clever algorithms to get the best next move, ie the best
-     * next state. This skeleton returns a random move instead.
-     */
 
     return bestState;
 }
@@ -77,39 +61,44 @@ int Player::alphabeta(const GameState &pState, uint8_t player, int depth, int al
 	// If depth is 0 or node is a leaf-node
 	if (!depth || !childStates.size())
 	{
-		return evaluation(pState);
+		v = evaluation(pState);
+		std::cerr<<"\n The evaluation we get: "<<v;
 	}
 
-	else
+	// If player is MAX (X-player). We want X to win.
+	else if (player == max_p)
 	{
-		// If player is MAX (X-player). We want X to win.
-		if (player == max_p)
-		{
-			v = -1000000;
-			// For every child
-			for(unsigned int i = 0; i<childStates.size(); i++)
-            {
-            	v = std::max(v, alphabeta(childStates[i], min_p, depth-1, alpha, beta));
-                alpha = std::max(alpha, v);
-                // Prune if branch is not useful
-                if (beta<=alpha) break;
-            }
-		}
-		// If player is MIN (Y-player). We want Y to lose.
-		else
-		{
-			v = +1000000;
-			// For every child
-			for(unsigned int i = 0; i<childStates.size(); i++)
-            {
-            	v = std::min(v, alphabeta(childStates[i], max_p, depth-1, alpha, beta));
-                beta = std::min(beta, v);
-                // Prune if branch is not useful
-                if (beta<=alpha) break;
-            }
-		}
-	}
 
+        v = -100000000;
+        // For every child
+        for(unsigned int i = 0; i<childStates.size(); i++)
+        {
+            std::cerr<<"\nFor the max player";
+            v = std::max(v, alphabeta(childStates[i], min_p, depth-1, alpha, beta));
+            alpha = std::max(alpha, v);
+            // Prune if branch is not useful
+            if (beta<=alpha)
+                break;
+        }
+    }
+
+    // If player is MIN (Y-player). We want Y to lose.
+    else
+    {
+        v = +100000000;
+        // For every child
+        for(unsigned int i = 0; i<childStates.size(); i++)
+        {
+            std::cerr<<"\n For the min player";
+            v = std::min(v, alphabeta(childStates[i], max_p, depth-1, alpha, beta));
+            beta = std::min(beta, v);
+            // Prune if branch is not useful
+            if (beta<=alpha)
+                break;
+        }
+    }
+
+    return v;
 }
 
 int Player::evaluation(const GameState &pState)
@@ -158,11 +147,12 @@ int Player::evaluation(const GameState &pState)
 	 * O moves first.
 	 */
 
-    int total_score = 0; // Total score of the evaluation function
+//    int total_score = 0; // Total score of the evaluation function
 
     // i: row index in current layer
     // j: col index in current layer
     // k: layer index (3rd dimension)
+
     int score = 0;
 
     int num_x = 0;  // To check how many X

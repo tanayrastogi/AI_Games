@@ -73,21 +73,24 @@ int main(int argc, char **argv)
         TICTACTOE3D::GameState output_state = player.play(input_state, deadline);
 
 		if (deadline < TICTACTOE3D::Deadline::now()) {
+            std::cerr<<"\nCrossed the deadline!!!";
 			exit(152);
+
 		}
 
         // Check if output state is correct
-        std::vector<TICTACTOE3D::GameState> output_states; 
-        input_state.findPossibleMoves(output_states); 
-        bool output_state_correct = false; 
-        for (unsigned int i = 0; i < output_states.size(); ++i) 
-                if (output_state.isEqual(output_states[i])) 
+        std::vector<TICTACTOE3D::GameState> output_states;
+        input_state.findPossibleMoves(output_states);
+        bool output_state_correct = false;
+        for (unsigned int i = 0; i < output_states.size(); ++i)
+                if (output_state.isEqual(output_states[i]))
                 {
                         output_state_correct = true;
                         break;
                 }
-        if (!output_state_correct) { 
-                exit(134); 
+        if (!output_state_correct) {
+                std::cerr<<"\nSomething is not correct!!!";
+                exit(134);
         }
 
         // Print the output state
