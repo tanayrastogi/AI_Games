@@ -1,5 +1,6 @@
 #include "player.hpp"
 #include <cstdlib>
+#include <algorithm>
 #include <math.h>
 
 namespace TICTACTOE3D
@@ -11,7 +12,9 @@ GameState Player::play(const GameState &pState,const Deadline &pDue)
 	// Utility value
     int v = 0;
     int depth = 3;
-    
+    int alpha = -100000000;
+    int beta = 100000000;
+
     // Define best state
     GameState bestState;
 
@@ -20,49 +23,45 @@ GameState Player::play(const GameState &pState,const Deadline &pDue)
     pState.findPossibleMoves(lNextStates);
 
 
-    // Define max and min player	
+    // Define max and min player
     max_p = pState.getNextPlayer();
     min_p = max_p ^ (CELL_X | CELL_O);
-    
-    if (lNextStates.size() == 0) return GameState(pState, Move());
+
+    if (lNextStates.size() == 0)
+        return GameState(pState, Move());
 
     // Otherwise running Minimax for max player
-    int v = -1000000;
+    v = -1000000;
     for(unsigned int i = 0; i<lNextStates.size(); i++)
     {
-        /*v = alphabeta(lNextStates[i], min_p, depth - 1, -1000000000000, +1000000000000);
-        if(v > bestValue)
+        v = std::max(v, alphabeta(lNextStates[i], min_p, depth-1, alpha, beta));
+        if(v > alpha)
         {
-            bestValue = v;
+            alpha = v;
             bestState = lNextStates[i];
-//            std::cerr<<"\nThe best state is at position: "<<i;
-//            std::cerr<<"\nThe best value for state: "<<bestValue << std::endl;
-        }*/
-		// For every child
-		for(unsigned int i = 0; i<childStates.size(); i++)
-        {
-    		v = std::max(v, alphabeta(childStates[i], min_p, depth-1, alpha, beta));
-        	if(v > alpha)
-        	{
-            	alpha = v;
-            	bestState = lNextStates[i];
-            }
-        	// Prune if branch is not useful
-        	if (beta<=a) break;
-        }  
+        }
+        // Prune if branch is not useful
+        if (beta<=a) break;
+
     }
 
     /*
      * Here you should write your clever algorithms to get the best next move, ie the best
      * next state. This skeleton returns a random move instead.
      */
-    
+
     return bestState;
 }
 
 // Minimax algorithm with alpha-beta pruning
 int Player::alphabeta(const GameState &pState, uint8_t player, int depth, double alpha, double beta)
 {
+    std::vector<GameState> childStates;
+    int v = 0;
+
+    // Finds all the possible children states
+    pState.findPossibleMoves(childStates);
+
 	// If depth is 0 or node is a leaf-node
 	if (!depth || !childStates.size())
 	{
@@ -72,7 +71,7 @@ int Player::alphabeta(const GameState &pState, uint8_t player, int depth, double
 	else
 	{
 		// If player is MAX (X-player). We want X to win.
-		if
+		if (player == max_p)
 		{
 			v = -1000000;
 			// For every child
@@ -82,7 +81,7 @@ int Player::alphabeta(const GameState &pState, uint8_t player, int depth, double
                 alpha = std::max(alpha, v);
                 // Prune if branch is not useful
                 if (beta<=a) break;
-            }        
+            }
 		}
 		// If player is MIN (Y-player). We want Y to lose.
 		else
@@ -95,7 +94,7 @@ int Player::alphabeta(const GameState &pState, uint8_t player, int depth, double
                 beta = std::min(beta, v);
                 // Prune if branch is not useful
                 if (beta<=a) break;
-            } 
+            }
 		}
 	}
 
@@ -122,28 +121,28 @@ int Player::evaluation(const GameState &pState)
 
 	*/
 	/* Cells are numbered as follows:
- 	*			lay 0						lay 1						lay 2						lay 3			
-	 *    col 0  1  2  3  		    col 0  1  2  3  		    col 0  1  2  3  		    col 0  1  2  3  		
-	 * row  ---------------		 row  ---------------		 row  ---------------		 row  ---------------		
-	 *  0  |  0  1  2  3  |  0	  0  | 16  17 18 19 |  0	  0  | 32  33 34 35 |  0	  0  | 48  49 50 51 |  0	
-	 *  1  |  4  5  6  7  |  1	  1  | 20  21 22 23 |  1	  1  | 36  37 38 39 |  1	  1  | 52  53 54 55 |  1	
-	 *  2  |  8  9  10 11 |  2	  2  | 24  25 26 27 |  2	  2  | 40  41 42 43 |  2	  2  | 56  57 58 59 |  2	
-	 *  3  | 12  13 14 15 |  3	  3  | 28  29 30 31 |  3	  3  | 44  45 46 47 |  3	  3  | 60  61 62 63 |  3	
-	 *      ---------------		      ---------------		      ---------------		      ---------------		
-	 *        0  1  2  3		        0  1  2  3		            0  1  2  3		            0  1  2  3		    
-	 
+ 	*			lay 0						lay 1						lay 2						lay 3
+	 *    col 0  1  2  3  		    col 0  1  2  3  		    col 0  1  2  3  		    col 0  1  2  3
+	 * row  ---------------		 row  ---------------		 row  ---------------		 row  ---------------
+	 *  0  |  0  1  2  3  |  0	  0  | 16  17 18 19 |  0	  0  | 32  33 34 35 |  0	  0  | 48  49 50 51 |  0
+	 *  1  |  4  5  6  7  |  1	  1  | 20  21 22 23 |  1	  1  | 36  37 38 39 |  1	  1  | 52  53 54 55 |  1
+	 *  2  |  8  9  10 11 |  2	  2  | 24  25 26 27 |  2	  2  | 40  41 42 43 |  2	  2  | 56  57 58 59 |  2
+	 *  3  | 12  13 14 15 |  3	  3  | 28  29 30 31 |  3	  3  | 44  45 46 47 |  3	  3  | 60  61 62 63 |  3
+	 *      ---------------		      ---------------		      ---------------		      ---------------
+	 *        0  1  2  3		        0  1  2  3		            0  1  2  3		            0  1  2  3
+
 	 *
 	 * The staring board looks like this:
 	 *			lay 0           			lay 1						lay 2						lay 3
-	 *    col 0  1  2  3            col 0  1  2  3              col 0  1  2  3              col 0  1  2  3  
+	 *    col 0  1  2  3            col 0  1  2  3              col 0  1  2  3              col 0  1  2  3
 	 * row  ---------------      row  ---------------        row  ---------------        row  ---------------
 	 *  0  |  .  .  .  .  |  0    0  |  .  .  .  .  |  0      0  |  .  .  .  .  |  0      0  |  .  .  .  .  |  0
-	 *  1  |  .  .  .  .  |  1	  1  |  .  .  .  .  |  1	  1  |  .  .  .  .  |  1	  1  |  .  .  .  .  |  1	
+	 *  1  |  .  .  .  .  |  1	  1  |  .  .  .  .  |  1	  1  |  .  .  .  .  |  1	  1  |  .  .  .  .  |  1
 	 *  2  |  .  .  .  .  |  2    2  |  .  .  .  .  |  2      2  |  .  .  .  .  |  2      2  |  .  .  .  .  |  2
 	 *  3  |  .  .  .  .  |  3    3  |  .  .  .  .  |  3      3  |  .  .  .  .  |  3      3  |  .  .  .  .  |  3
 	 *      ---------------           ---------------             ---------------             ---------------
 	 *        0  1  2  3                0  1  2  3                  0  1  2  3                  0  1  2  3
-	 * 
+	 *
 	 * O moves first.
 	 */
 
@@ -153,6 +152,9 @@ int Player::evaluation(const GameState &pState)
     // j: col index in current layer
     // k: layer index (3rd dimension)
     int score = 0;
+
+    int num_x = 0;  // To check how many X
+    int num_o = 0;  // To check how many O
 
     //############################################################
     //#######SCAN k-WISE##########################################
@@ -329,7 +331,7 @@ int Player::evaluation(const GameState &pState)
     //############################################################
     //3D-Diagonal 1
     num_x = 0;
-    num_o = 0;    
+    num_o = 0;
 	for(int i = 0; i<4; i++)
 	{
 		pState.at(i, i, i) == CELL_X ? num_x++ : num_o++;
@@ -340,7 +342,7 @@ int Player::evaluation(const GameState &pState)
 
     //3D-Diagonal 2
     num_x = 0;
-    num_o = 0;    
+    num_o = 0;
 	for(int i = 0; i<4; i++)
 	{
 		pState.at(3-i, i, i) == CELL_X ? num_x++ : num_o++;
@@ -351,7 +353,7 @@ int Player::evaluation(const GameState &pState)
 
     //3D-Diagonal 3
     num_x = 0;
-    num_o = 0;    
+    num_o = 0;
 	for(int i = 0; i<4; i++)
 	{
 		pState.at(i, 3-i, i) == CELL_X ? num_x++ : num_o++;
@@ -362,7 +364,7 @@ int Player::evaluation(const GameState &pState)
 
     //3D-Diagonal 4
     num_x = 0;
-    num_o = 0;    
+    num_o = 0;
 	for(int i = 0; i<4; i++)
 	{
 		pState.at(i, i, 3-i) == CELL_X ? num_x++ : num_o++;

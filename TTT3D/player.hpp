@@ -7,7 +7,7 @@
 #include "gamestate.hpp"
 #include <vector>
 
-namespace TICTACTOE
+namespace TICTACTOE3D
 {
 
 class Player
