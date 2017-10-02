@@ -10,10 +10,10 @@ GameState Player::play(const GameState &pState,const Deadline &pDue)
 {
     //std::cerr << "Processing " << pState.toMessage() << std::endl;
 	// Utility value
-    int v = 0;
+    int v;
     int depth = 3;
     int alpha = -100000000;
-    int beta = 100000000;
+    int beta  =  100000000;
 
     // Define best state
     GameState bestState;
@@ -30,8 +30,20 @@ GameState Player::play(const GameState &pState,const Deadline &pDue)
     if (lNextStates.size() == 0)
         return GameState(pState, Move());
 
-    // Otherwise running Minimax for max player
-    v = -1000000;
+    // Otherwise running alphabeta for max player
+    int bestValue = -1000000;
+
+    for(unsigned int i = 0; i<lNextStates.size(); i++)
+    {
+        v = alphabeta(lNextStates[i], min_p, depth-1, alpha, beta);
+        if(v > bestValue)
+        {
+            bestValue = v;
+            bestState = lNextStates[i];
+        }
+    }
+
+    /*
     for(unsigned int i = 0; i<lNextStates.size(); i++)
     {
         v = std::max(v, alphabeta(lNextStates[i], min_p, depth-1, alpha, beta));
@@ -41,9 +53,9 @@ GameState Player::play(const GameState &pState,const Deadline &pDue)
             bestState = lNextStates[i];
         }
         // Prune if branch is not useful
-        if (beta<=a) break;
+        if (beta<=alpha) break;
 
-    }
+    }*/
 
     /*
      * Here you should write your clever algorithms to get the best next move, ie the best
@@ -54,7 +66,7 @@ GameState Player::play(const GameState &pState,const Deadline &pDue)
 }
 
 // Minimax algorithm with alpha-beta pruning
-int Player::alphabeta(const GameState &pState, uint8_t player, int depth, double alpha, double beta)
+int Player::alphabeta(const GameState &pState, uint8_t player, int depth, int alpha, int beta)
 {
     std::vector<GameState> childStates;
     int v = 0;
@@ -80,7 +92,7 @@ int Player::alphabeta(const GameState &pState, uint8_t player, int depth, double
             	v = std::max(v, alphabeta(childStates[i], min_p, depth-1, alpha, beta));
                 alpha = std::max(alpha, v);
                 // Prune if branch is not useful
-                if (beta<=a) break;
+                if (beta<=alpha) break;
             }
 		}
 		// If player is MIN (Y-player). We want Y to lose.
@@ -93,7 +105,7 @@ int Player::alphabeta(const GameState &pState, uint8_t player, int depth, double
             	v = std::min(v, alphabeta(childStates[i], max_p, depth-1, alpha, beta));
                 beta = std::min(beta, v);
                 // Prune if branch is not useful
-                if (beta<=a) break;
+                if (beta<=alpha) break;
             }
 		}
 	}
@@ -260,7 +272,7 @@ int Player::evaluation(const GameState &pState)
 	   	// Check secondary diagonal
 	    num_x = 0;
 	    num_o = 0;
-        for(int i = 0; i<4; i++)
+        for(int k = 0; k<4; k++)
     	{
     		pState.at(i, k, 3-k) == CELL_X ? num_x++ : num_o++;
     	}
