@@ -10,10 +10,10 @@ GameState Player::play(const GameState &pState,const Deadline &pDue)
 {
     //std::cerr << "Processing " << pState.toMessage() << std::endl;
 	// Utility value
-    int v;
+    double v;
     int depth = 2;
-    int alpha = -100000000;
-    int beta  =  100000000;
+    double alpha = -100000000;
+    double beta  =  100000000;
 
     // Define best state
     GameState bestState;
@@ -32,7 +32,7 @@ GameState Player::play(const GameState &pState,const Deadline &pDue)
         return GameState(pState, Move());
 
     // Otherwise running alphabeta for max player
-    int bestValue = -1000000;
+    double bestValue = -1000000;
     for(unsigned int i = 0; i<lNextStates.size(); i++)
     {
         std::cerr<<"\nRunning the alpha beta";
@@ -50,10 +50,10 @@ GameState Player::play(const GameState &pState,const Deadline &pDue)
 }
 
 // Minimax algorithm with alpha-beta pruning
-int Player::alphabeta(const GameState &pState, uint8_t player, int depth, int alpha, int beta)
+double Player::alphabeta(const GameState &pState, uint8_t player, int depth, double alpha, double beta)
 {
     std::vector<GameState> childStates;
-    int v = 0;
+    double v = 0;
 
     // Finds all the possible children states
     pState.findPossibleMoves(childStates);
@@ -101,7 +101,7 @@ int Player::alphabeta(const GameState &pState, uint8_t player, int depth, int al
     return v;
 }
 
-int Player::evaluation(const GameState &pState)
+double Player::evaluation(const GameState &pState)
 {
     /** Evaluation function: Search for the number of X or O in a line.
     for X (MAX_turn),
@@ -153,7 +153,7 @@ int Player::evaluation(const GameState &pState)
     // j: col index in current layer
     // k: layer index (3rd dimension)
 
-    int score = 0;
+    double score = 0;
 
     int num_x = 0;  // To check how many X
     int num_o = 0;  // To check how many O

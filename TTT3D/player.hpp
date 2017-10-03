@@ -21,8 +21,8 @@ public:
     uint8_t min_p;
 
     GameState play(const GameState &pState, const Deadline &pDue);
-    int alphabeta(const GameState &pState, uint8_t player, int depth, int alpha, int beta);
-    int evaluation(const GameState &state);
+    double alphabeta(const GameState &pState, uint8_t player, int depth, double alpha, double beta);
+    double evaluation(const GameState &state);
 };
 
 /*namespace TICTACTOE*/ }
