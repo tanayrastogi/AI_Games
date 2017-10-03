@@ -170,7 +170,13 @@ double Player::evaluation(const GameState &pState)
 	    {
 	        for(int j = 0; j<4; j++)
 	    	{
-	    		pState.at(i, j, k) == CELL_X ? num_x++ : num_o++;
+                // Checking how many X are there in each row
+                if(pState.at(i, j, k) == CELL_X)
+                num_x++;
+                // Checking how many O are there in each column
+                if(pState.at(i, j, k) == CELL_O)
+                num_o++;
+	    		//pState.at(i, j, k) == CELL_X ? num_x++ : num_o++;
 	    	}
 
 	        // Update score
@@ -184,7 +190,13 @@ double Player::evaluation(const GameState &pState)
 	    {
 	        for(int i = 0; i<4; i++)
 	    	{
-	    		pState.at(i, j, k) == CELL_X ? num_x++ : num_o++;
+                // Checking how many X are there in each row
+                if(pState.at(i, j, k) == CELL_X)
+                num_x++;
+                // Checking how many O are there in each column
+                if(pState.at(i, j, k) == CELL_O)
+                num_o++;
+	    		//pState.at(i, j, k) == CELL_X ? num_x++ : num_o++;
 	    	}
 
 	        // Update score
@@ -196,7 +208,13 @@ double Player::evaluation(const GameState &pState)
 	    num_o = 0;
         for(int i = 0; i<4; i++)
     	{
-    		pState.at(i, i, k) == CELL_X ? num_x++ : num_o++;
+            // Checking how many X are there in each row
+            if(pState.at(i, j, k) == CELL_X)
+            num_x++;
+            // Checking how many O are there in each column
+            if(pState.at(i, j, k) == CELL_O)
+            num_o++;
+    		//pState.at(i, i, k) == CELL_X ? num_x++ : num_o++;
     	}
 
         // Update score
@@ -207,7 +225,13 @@ double Player::evaluation(const GameState &pState)
 	    num_o = 0;
         for(int i = 0; i<4; i++)
     	{
-    		pState.at(i, 3-i, k) == CELL_X ? num_x++ : num_o++;
+            // Checking how many X are there in each row
+            if(pState.at(i, 3-i, k) == CELL_X)
+            num_x++;
+            // Checking how many O are there in each column
+            if(pState.at(i, 3-i, k) == CELL_O)
+            num_o++;
+    		//pState.at(i, 3-i, k) == CELL_X ? num_x++ : num_o++;
     	}
 
         // Update score
@@ -227,7 +251,13 @@ double Player::evaluation(const GameState &pState)
 	    {
 	        for(int j = 0; j<4; j++)
 	    	{
-	    		pState.at(i, j, k) == CELL_X ? num_x++ : num_o++;
+                // Checking how many X are there in each row
+                if(pState.at(i, j, k) == CELL_X)
+                num_x++;
+                // Checking how many O are there in each column
+                if(pState.at(i, j, k) == CELL_O)
+                num_o++;
+	    		//pState.at(i, j, k) == CELL_X ? num_x++ : num_o++;
 	    	}
 	    }
 
@@ -241,7 +271,13 @@ double Player::evaluation(const GameState &pState)
 	    {
 	        for(int k = 0; k<4; k++)
 	    	{
-	    		pState.at(i, j, k) == CELL_X ? num_x++ : num_o++;
+                // Checking how many X are there in each row
+                if(pState.at(i, j, k) == CELL_X)
+                num_x++;
+                // Checking how many O are there in each column
+                if(pState.at(i, j, k) == CELL_O)
+                num_o++;
+	    		//pState.at(i, j, k) == CELL_X ? num_x++ : num_o++;
 	    	}
 	    }
 
@@ -253,7 +289,13 @@ double Player::evaluation(const GameState &pState)
 	    num_o = 0;
         for(int k = 0; k<4; k++)
     	{
-    		pState.at(i, k, k) == CELL_X ? num_x++ : num_o++;
+            // Checking how many X are there in each row
+            if(pState.at(i, k, k) == CELL_X)
+            num_x++;
+            // Checking how many O are there in each column
+            if(pState.at(i, k, k) == CELL_O)
+            num_o++;
+    		//pState.at(i, k, k) == CELL_X ? num_x++ : num_o++;
     	}
 
         // Update score
@@ -264,7 +306,13 @@ double Player::evaluation(const GameState &pState)
 	    num_o = 0;
         for(int k = 0; k<4; k++)
     	{
-    		pState.at(i, k, 3-k) == CELL_X ? num_x++ : num_o++;
+            // Checking how many X are there in each row
+            if(pState.at(i, k, 3-k) == CELL_X)
+            num_x++;
+            // Checking how many O are there in each column
+            if(pState.at(i, k, 3-k) == CELL_O)
+            num_o++;
+    		//pState.at(i, k, 3-k) == CELL_X ? num_x++ : num_o++;
     	}
 
         // Update score
@@ -284,7 +332,13 @@ double Player::evaluation(const GameState &pState)
 	    {
 	        for(int k = 0; k<4; k++)
 	    	{
-	    		pState.at(i, j, k) == CELL_X ? num_x++ : num_o++;
+                // Checking how many X are there in each row
+                if(pState.at(i, j, k) == CELL_X)
+                num_x++;
+                // Checking how many O are there in each column
+                if(pState.at(i, j, k) == CELL_O)
+                num_o++;
+	    		//pState.at(i, j, k) == CELL_X ? num_x++ : num_o++;
 	    	}
 	    }
 
@@ -298,7 +352,13 @@ double Player::evaluation(const GameState &pState)
 	    {
 	        for(int i = 0; i<4; i++)
 	    	{
-	    		pState.at(i, j, k) == CELL_X ? num_x++ : num_o++;
+                // Checking how many X are there in each row
+                if(pState.at(i, j, k) == CELL_X)
+                num_x++;
+                // Checking how many O are there in each column
+                if(pState.at(i, j, k) == CELL_O)
+                num_o++;
+	    		//pState.at(i, j, k) == CELL_X ? num_x++ : num_o++;
 	    	}
 	    }
 
@@ -310,7 +370,13 @@ double Player::evaluation(const GameState &pState)
 	    num_o = 0;
         for(int i = 0; i<4; i++)
     	{
-    		pState.at(i, j, i) == CELL_X ? num_x++ : num_o++;
+            // Checking how many X are there in each row
+            if(pState.at(i, j, i) == CELL_X)
+            num_x++;
+            // Checking how many O are there in each column
+            if(pState.at(i, j, i) == CELL_O)
+            num_o++;
+    		//pState.at(i, j, i) == CELL_X ? num_x++ : num_o++;
     	}
 
         // Update score
@@ -321,7 +387,13 @@ double Player::evaluation(const GameState &pState)
 	    num_o = 0;
         for(int i = 0; i<4; i++)
     	{
-    		pState.at(3-i, j, i) == CELL_X ? num_x++ : num_o++;
+            // Checking how many X are there in each row
+            if(pState.at(3-i, j, i) == CELL_X)
+            num_x++;
+            // Checking how many O are there in each column
+            if(pState.at(3-i, j, i) == CELL_O)
+            num_o++;
+    		//pState.at(3-i, j, i) == CELL_X ? num_x++ : num_o++;
     	}
 
         // Update score
@@ -336,7 +408,13 @@ double Player::evaluation(const GameState &pState)
     num_o = 0;
 	for(int i = 0; i<4; i++)
 	{
-		pState.at(i, i, i) == CELL_X ? num_x++ : num_o++;
+        // Checking how many X are there in each row
+        if(pState.at(i, i, i) == CELL_X)
+        num_x++;
+        // Checking how many O are there in each column
+        if(pState.at(i, i, i) == CELL_O)
+        num_o++;
+		//pState.at(i, i, i) == CELL_X ? num_x++ : num_o++;
 	}
 
     // Update score
@@ -347,7 +425,13 @@ double Player::evaluation(const GameState &pState)
     num_o = 0;
 	for(int i = 0; i<4; i++)
 	{
-		pState.at(3-i, i, i) == CELL_X ? num_x++ : num_o++;
+        // Checking how many X are there in each row
+        if(pState.at(3-i, i, i) == CELL_X)
+        num_x++;
+        // Checking how many O are there in each column
+        if(pState.at(3-i, i, i) == CELL_O)
+        num_o++;
+		//pState.at(3-i, i, i) == CELL_X ? num_x++ : num_o++;
 	}
 
     // Update score
@@ -358,7 +442,13 @@ double Player::evaluation(const GameState &pState)
     num_o = 0;
 	for(int i = 0; i<4; i++)
 	{
-		pState.at(i, 3-i, i) == CELL_X ? num_x++ : num_o++;
+        // Checking how many X are there in each row
+        if(pState.at(i, 3-i, i) == CELL_X)
+        num_x++;
+        // Checking how many O are there in each column
+        if(pState.at(i, 3-i, i) == CELL_O)
+        num_o++;
+		//pState.at(i, 3-i, i) == CELL_X ? num_x++ : num_o++;
 	}
 
     // Update score
@@ -369,7 +459,13 @@ double Player::evaluation(const GameState &pState)
     num_o = 0;
 	for(int i = 0; i<4; i++)
 	{
-		pState.at(i, i, 3-i) == CELL_X ? num_x++ : num_o++;
+        // Checking how many X are there in each row
+        if(pState.at(i, i, 3-i) == CELL_X)
+        num_x++;
+        // Checking how many O are there in each column
+        if(pState.at(i, i, 3-i) == CELL_O)
+        num_o++;
+		//pState.at(i, i, 3-i) == CELL_X ? num_x++ : num_o++;
 	}
 
     // Update score
@@ -379,7 +475,6 @@ double Player::evaluation(const GameState &pState)
 	// This is the final score of the current table
 	return score;
 }
-
 
 
 /*namespace TICTACTOE3D*/ }
