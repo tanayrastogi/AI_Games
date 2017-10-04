@@ -35,14 +35,14 @@ GameState Player::play(const GameState &pState,const Deadline &pDue)
     double bestValue = -1000000;
     for(unsigned int i = 0; i<lNextStates.size(); i++)
     {
-        std::cerr<<"\nRunning the alpha beta";
+        //std::cerr<<"\nRunning the alpha beta";
         v = alphabeta(lNextStates[i], min_p, depth-1, alpha, beta);
         if(v > bestValue)
         {
             bestValue = v;
             bestState = lNextStates[i];
-            std::cerr<<"\nThe best value is: "<<bestValue;
-            std::cerr<<"\nThe best state is: "<<i;
+            //std::cerr<<"\nThe best value is: "<<bestValue;
+            //std::cerr<<"\nThe best state is: "<<i;
         }
     }
 
@@ -62,7 +62,7 @@ double Player::alphabeta(const GameState &pState, uint8_t player, int depth, dou
 	if (!depth || !childStates.size())
 	{
 		v = evaluation(pState);
-		std::cerr<<"\n The evaluation we get: "<<v;
+		//std::cerr<<"\n The evaluation we get: "<<v;
 	}
 
 	// If player is MAX (X-player). We want X to win.
@@ -73,7 +73,6 @@ double Player::alphabeta(const GameState &pState, uint8_t player, int depth, dou
         // For every child
         for(unsigned int i = 0; i<childStates.size(); i++)
         {
-            std::cerr<<"\nFor the max player";
             v = std::max(v, alphabeta(childStates[i], min_p, depth-1, alpha, beta));
             alpha = std::max(alpha, v);
             // Prune if branch is not useful
@@ -89,7 +88,6 @@ double Player::alphabeta(const GameState &pState, uint8_t player, int depth, dou
         // For every child
         for(unsigned int i = 0; i<childStates.size(); i++)
         {
-            std::cerr<<"\n For the min player";
             v = std::min(v, alphabeta(childStates[i], max_p, depth-1, alpha, beta));
             beta = std::min(beta, v);
             // Prune if branch is not useful
@@ -209,10 +207,10 @@ double Player::evaluation(const GameState &pState)
         for(int i = 0; i<4; i++)
     	{
             // Checking how many X are there in each row
-            if(pState.at(i, j, k) == CELL_X)
+            if(pState.at(i, i, k) == CELL_X)
             num_x++;
             // Checking how many O are there in each column
-            if(pState.at(i, j, k) == CELL_O)
+            if(pState.at(i, i, k) == CELL_O)
             num_o++;
     		//pState.at(i, i, k) == CELL_X ? num_x++ : num_o++;
     	}
