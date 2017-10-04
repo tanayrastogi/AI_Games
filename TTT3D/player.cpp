@@ -11,7 +11,7 @@ GameState Player::play(const GameState &pState,const Deadline &pDue)
     //std::cerr << "Processing " << pState.toMessage() << std::endl;
 	// Utility value
     double v;
-    int depth = 2;
+    int depth = 1;
     double alpha = -100000000;
     double beta  =  100000000;
 
@@ -43,6 +43,7 @@ GameState Player::play(const GameState &pState,const Deadline &pDue)
             bestState = lNextStates[i];
             //std::cerr<<"\nThe best value is: "<<bestValue;
             //std::cerr<<"\nThe best state is: "<<i;
+            alpha = bestValue;
         }
     }
 
@@ -178,7 +179,15 @@ double Player::evaluation(const GameState &pState)
 	    	}
 
 	        // Update score
-	        score += pow(10, num_x - 1) - pow(10, num_o - 1);
+            if ((num_x == 0) && (num_o != 0))
+            {
+                score -= pow(10, num_o);
+            }
+            else if ((num_x != 0) && (num_o == 0))
+            {
+                score += pow(10, num_x);
+            }
+	        //score += pow(10, num_x - 1) - pow(10, num_o - 1);
 	    }
 
 	    // Check every column
@@ -197,8 +206,15 @@ double Player::evaluation(const GameState &pState)
 	    		//pState.at(i, j, k) == CELL_X ? num_x++ : num_o++;
 	    	}
 
-	        // Update score
-	        score += pow(10, num_x - 1) - pow(10, num_o - 1);
+            // Update score
+            if ((num_x == 0) && (num_o != 0))
+            {
+                score -= pow(10, num_o);
+            }
+            else if ((num_x != 0) && (num_o == 0))
+            {
+                score += pow(10, num_x);
+            }
 	    }
 
 	    // Check every layer-diagonal
@@ -216,7 +232,14 @@ double Player::evaluation(const GameState &pState)
     	}
 
         // Update score
-        score += pow(10, num_x - 1) - pow(10, num_o - 1);
+        if ((num_x == 0) && (num_o != 0))
+        {
+            score -= pow(10, num_o);
+        }
+        else if ((num_x != 0) && (num_o == 0))
+        {
+            score += pow(10, num_x);
+        }
 
 	   	// Check secondary diagonal
 	    num_x = 0;
@@ -233,7 +256,14 @@ double Player::evaluation(const GameState &pState)
     	}
 
         // Update score
-        score += pow(10, num_x - 1) - pow(10, num_o - 1);
+        if ((num_x == 0) && (num_o != 0))
+        {
+            score -= pow(10, num_o);
+        }
+        else if ((num_x != 0) && (num_o == 0))
+        {
+            score += pow(10, num_x);
+        }
 	}
 
 
@@ -260,7 +290,14 @@ double Player::evaluation(const GameState &pState)
 	    }
 
         // Update score
-        score += pow(10, num_x - 1) - pow(10, num_o - 1);
+        if ((num_x == 0) && (num_o != 0))
+        {
+            score -= pow(10, num_o);
+        }
+        else if ((num_x != 0) && (num_o == 0))
+        {
+            score += pow(10, num_x);
+        }
 
 	    // Check every column
 	    num_x = 0;
@@ -280,7 +317,14 @@ double Player::evaluation(const GameState &pState)
 	    }
 
         // Update score
-        score += pow(10, num_x - 1) - pow(10, num_o - 1);
+        if ((num_x == 0) && (num_o != 0))
+        {
+            score -= pow(10, num_o);
+        }
+        else if ((num_x != 0) && (num_o == 0))
+        {
+            score += pow(10, num_x);
+        }
 
 	    // Check main diagonal
 	    num_x = 0;
@@ -297,7 +341,14 @@ double Player::evaluation(const GameState &pState)
     	}
 
         // Update score
-        score += pow(10, num_x - 1) - pow(10, num_o - 1);
+        if ((num_x == 0) && (num_o != 0))
+        {
+            score -= pow(10, num_o);
+        }
+        else if ((num_x != 0) && (num_o == 0))
+        {
+            score += pow(10, num_x);
+        }
 
 	   	// Check secondary diagonal
 	    num_x = 0;
@@ -314,7 +365,14 @@ double Player::evaluation(const GameState &pState)
     	}
 
         // Update score
-        score += pow(10, num_x - 1) - pow(10, num_o - 1);
+        if ((num_x == 0) && (num_o != 0))
+        {
+            score -= pow(10, num_o);
+        }
+        else if ((num_x != 0) && (num_o == 0))
+        {
+            score += pow(10, num_x);
+        }
 
 	}
 
@@ -341,7 +399,14 @@ double Player::evaluation(const GameState &pState)
 	    }
 
         // Update score
-        score += pow(10, num_x - 1) - pow(10, num_o - 1);
+        if ((num_x == 0) && (num_o != 0))
+        {
+            score -= pow(10, num_o);
+        }
+        else if ((num_x != 0) && (num_o == 0))
+        {
+            score += pow(10, num_x);
+        }
 
 	    // Check every column
 	    num_x = 0;
@@ -361,7 +426,14 @@ double Player::evaluation(const GameState &pState)
 	    }
 
         // Update score
-        score += pow(10, num_x - 1) - pow(10, num_o - 1);
+        if ((num_x == 0) && (num_o != 0))
+        {
+            score -= pow(10, num_o);
+        }
+        else if ((num_x != 0) && (num_o == 0))
+        {
+            score += pow(10, num_x);
+        }
 
 	    // Check main diagonal
 	    num_x = 0;
@@ -378,7 +450,14 @@ double Player::evaluation(const GameState &pState)
     	}
 
         // Update score
-        score += pow(10, num_x - 1) - pow(10, num_o - 1);
+        if ((num_x == 0) && (num_o != 0))
+        {
+            score -= pow(10, num_o);
+        }
+        else if ((num_x != 0) && (num_o == 0))
+        {
+            score += pow(10, num_x);
+        }
 
 	   	// Check secondary diagonal
 	    num_x = 0;
@@ -395,7 +474,14 @@ double Player::evaluation(const GameState &pState)
     	}
 
         // Update score
-        score += pow(10, num_x - 1) - pow(10, num_o - 1);
+        if ((num_x == 0) && (num_o != 0))
+        {
+            score -= pow(10, num_o);
+        }
+        else if ((num_x != 0) && (num_o == 0))
+        {
+            score += pow(10, num_x);
+        }
 	}
 
     //############################################################
@@ -416,7 +502,14 @@ double Player::evaluation(const GameState &pState)
 	}
 
     // Update score
-    score += pow(10, num_x - 1) - pow(10, num_o - 1);
+    if ((num_x == 0) && (num_o != 0))
+    {
+        score -= pow(10, num_o);
+    }
+    else if ((num_x != 0) && (num_o == 0))
+    {
+        score += pow(10, num_x);
+    }
 
     //3D-Diagonal 2
     num_x = 0;
@@ -433,7 +526,14 @@ double Player::evaluation(const GameState &pState)
 	}
 
     // Update score
-    score += pow(10, num_x - 1) - pow(10, num_o - 1);
+    if ((num_x == 0) && (num_o != 0))
+    {
+        score -= pow(10, num_o);
+    }
+    else if ((num_x != 0) && (num_o == 0))
+    {
+        score += pow(10, num_x);
+    }
 
     //3D-Diagonal 3
     num_x = 0;
@@ -450,7 +550,14 @@ double Player::evaluation(const GameState &pState)
 	}
 
     // Update score
-    score += pow(10, num_x - 1) - pow(10, num_o - 1);
+    if ((num_x == 0) && (num_o != 0))
+    {
+        score -= pow(10, num_o);
+    }
+    else if ((num_x != 0) && (num_o == 0))
+    {
+        score += pow(10, num_x);
+    }
 
     //3D-Diagonal 4
     num_x = 0;
@@ -467,7 +574,14 @@ double Player::evaluation(const GameState &pState)
 	}
 
     // Update score
-    score += pow(10, num_x - 1) - pow(10, num_o - 1);
+    if ((num_x == 0) && (num_o != 0))
+    {
+        score -= pow(10, num_o);
+    }
+    else if ((num_x != 0) && (num_o == 0))
+    {
+        score += pow(10, num_x);
+    }
 
 
 	// This is the final score of the current table
