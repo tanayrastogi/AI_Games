@@ -5,10 +5,9 @@
 
 namespace TICTACTOE3D
 {
-int p_ortho = 0;
-int p_2dd   = 0;
-int p_3dd   = 0;
-double infinity = 100000000;    
+
+double infinity = 100000000;
+double update(int num_x, int num_o);
 
 GameState Player::play(const GameState &pState,const Deadline &pDue)
 {
@@ -35,18 +34,15 @@ GameState Player::play(const GameState &pState,const Deadline &pDue)
     if (lNextStates.size() == 0)
         return GameState(pState, Move());
 
-    // Otherwise running alphabeta for max player
+    // Otherwise running alpha-beta for max player
     double bestValue = -infinity;
     for(unsigned int i = 0; i<lNextStates.size(); i++)
     {
-        //std::cerr<<"\nRunning the alpha beta";
         v = alphabeta(lNextStates[i], min_p, depth-1, alpha, beta);
         if(v > bestValue)
         {
             bestValue = v;
             bestState = lNextStates[i];
-            //std::cerr<<"\nThe best value is: "<<bestValue;
-            //std::cerr<<"\nThe best state is: "<<i;
             alpha = bestValue;
         }
     }
@@ -67,7 +63,7 @@ double Player::alphabeta(const GameState &pState, uint8_t player, int depth, dou
 	if (depth ==0 || childStates.size()==0)
 	{
 		v = evaluation(pState);
-		//std::cerr<<"\n The evaluation we get: "<<v;
+		std::cerr<<"\n The evaluation we get: "<<v;
 	}
 
 	// If player is MAX (X-player). We want X to win.
@@ -124,7 +120,7 @@ double Player::evaluation(const GameState &pState)
     and return that
 
 	*/
-	/* Cells are numbered as follows:
+	/** Cells are numbered as follows:
  	*			lay 0						lay 1						lay 2						lay 3
 	 *    col 0  1  2  3  		    col 0  1  2  3  		    col 0  1  2  3  		    col 0  1  2  3
 	 * row  ---------------		 row  ---------------		 row  ---------------		 row  ---------------
@@ -150,15 +146,13 @@ double Player::evaluation(const GameState &pState)
 	 * O moves first.
 	 */
 
-//    int total_score = 0; // Total score of the evaluation function
-
-    // i: row index in current layer
-    // j: col index in current layer
-    // k: layer index (3rd dimension)
+    // i: layer index (3rd dimension)
+    // j: Row in each face
+    // k: Column in each face
 
     double score = 0;
 
-
+    // If the state is winning state, return high value
     if(pState.isXWin())
         return infinity;
     else if(pState.isOWin())
@@ -170,170 +164,11 @@ double Player::evaluation(const GameState &pState)
 
 
 
-    //############################################################
-    //#######SCAN k-WISE##########################################
-    //############################################################
-    for(int k = 0; k<4; k++)
-    {
-		// Check every row
-	    for(int i = 0; i<4; i++)
-	    {
-            num_x = 0;
-            num_o = 0;
-	        for(int j = 0; j<4; j++)
-	    	{
-                // Checking how many X are there in each row
-                if(pState.at(i, j, k) == CELL_X)
-                num_x++;
-                // Checking how many O are there in each column
-                if(pState.at(i, j, k) == CELL_O)
-                num_o++;
-	    		//pState.at(i, j, k) == CELL_X ? num_x++ : num_o++;
-	    	}
-
-	          // Update score
-    if ((num_x == 0) && (num_o != 0))
-    {
-        score -= pow(10, num_o+p_3dd);
-        if(num_o == 4)
-            score -= infinity;
-    }
-    else if ((num_x != 0) && (num_o == 0))
-    {
-        score += pow(10, num_x+p_3dd);
-        if(num_x == 4)
-            score += infinity;
-    }
-	        //score += pow(10, num_x - 1) - pow(10, num_o - 1);
-	    }
-
-	    // Check every column
-	   
-	    for(int j = 0; j<4; j++)
-	    {
-            num_x = 0;
-            num_o = 0;
-	        for(int i = 0; i<4; i++)
-	    	{
-                // Checking how many X are there in each row
-                if(pState.at(i, j, k) == CELL_X)
-                num_x++;
-                // Checking how many O are there in each column
-                if(pState.at(i, j, k) == CELL_O)
-                num_o++;
-	    		//pState.at(i, j, k) == CELL_X ? num_x++ : num_o++;
-	    	}
-
-            // Update score
-    if ((num_x == 0) && (num_o != 0))
-    {
-        score -= pow(10, num_o+p_3dd);
-        if(num_o == 4)
-            score -= infinity;
-    }
-    else if ((num_x != 0) && (num_o == 0))
-    {
-        score += pow(10, num_x+p_3dd);
-        if(num_x == 4)
-            score += infinity;
-    }
-	    }
-
-	    // Check every layer-diagonal
-	    num_x = 0;
-	    num_o = 0;
-        for(int i = 0; i<4; i++)
-    	{
-            // Checking how many X are there in each row
-            if(pState.at(i, i, k) == CELL_X)
-            num_x++;
-            // Checking how many O are there in each column
-            if(pState.at(i, i, k) == CELL_O)
-            num_o++;
-    		//pState.at(i, i, k) == CELL_X ? num_x++ : num_o++;
-    	}
-
-        // Update score
-           // Update score
-    if ((num_x == 0) && (num_o != 0))
-    {
-        score -= pow(10, num_o+p_3dd);
-        if(num_o == 4)
-            score -= infinity;
-    }
-    else if ((num_x != 0) && (num_o == 0))
-    {
-        score += pow(10, num_x+p_3dd);
-        if(num_x == 4)
-            score += infinity;
-    }
-
-	   	// Check secondary diagonal
-	    num_x = 0;
-	    num_o = 0;
-        for(int i = 0; i<4; i++)
-    	{
-            // Checking how many X are there in each row
-            if(pState.at(i, 3-i, k) == CELL_X)
-            num_x++;
-            // Checking how many O are there in each column
-            if(pState.at(i, 3-i, k) == CELL_O)
-            num_o++;
-    		//pState.at(i, 3-i, k) == CELL_X ? num_x++ : num_o++;
-    	}
-
-        // Update score
-    if ((num_x == 0) && (num_o != 0))
-    {
-        score -= pow(10, num_o+p_3dd);
-        if(num_o == 4)
-            score -= infinity;
-    }
-    else if ((num_x != 0) && (num_o == 0))
-    {
-        score += pow(10, num_x+p_3dd);
-        if(num_x == 4)
-            score += infinity;
-    }
-	}
-
-
-    //############################################################
-    //#######SCAN i-WISE##########################################
-    //############################################################
+    //### Row Wise Check for all the face ### //
+    //####################################### //
     for(int i = 0; i<4; i++)
     {
 		// Check every row
-	    for(int k = 0; k<4; k++)
-	    {
-            num_x = 0;
-            num_o = 0;
-	        for(int j = 0; j<4; j++)
-	    	{
-                // Checking how many X are there in each row
-                if(pState.at(i, j, k) == CELL_X)
-                num_x++;
-                // Checking how many O are there in each column
-                if(pState.at(i, j, k) == CELL_O)
-                num_o++;
-	    		//pState.at(i, j, k) == CELL_X ? num_x++ : num_o++;
-	    	}
-             // Update score
-    if ((num_x == 0) && (num_o != 0))
-    {
-        score -= pow(10, num_o+p_3dd);
-        if(num_o == 4)
-            score -= infinity;
-    }
-    else if ((num_x != 0) && (num_o == 0))
-    {
-        score += pow(10, num_x+p_3dd);
-        if(num_x == 4)
-            score += infinity;
-    }
-	    }  
-
-	    // Check every column
 	    for(int j = 0; j<4; j++)
 	    {
             num_x = 0;
@@ -346,330 +181,323 @@ double Player::evaluation(const GameState &pState)
                 // Checking how many O are there in each column
                 if(pState.at(i, j, k) == CELL_O)
                 num_o++;
-	    		//pState.at(i, j, k) == CELL_X ? num_x++ : num_o++;
 	    	}
 
-              // Update score
-    if ((num_x == 0) && (num_o != 0))
-    {
-        score -= pow(10, num_o+p_3dd);
-        if(num_o == 4)
-            score -= infinity;
-    }
-    else if ((num_x != 0) && (num_o == 0))
-    {
-        score += pow(10, num_x+p_3dd);
-        if(num_x == 4)
-            score += infinity;
-    }
-	    }
-
-
-
-	    // Check main diagonal
-	    num_x = 0;
-	    num_o = 0;
-        for(int k = 0; k<4; k++)
-    	{
-            // Checking how many X are there in each row
-            if(pState.at(i, k, k) == CELL_X)
-            num_x++;
-            // Checking how many O are there in each column
-            if(pState.at(i, k, k) == CELL_O)
-            num_o++;
-    		//pState.at(i, k, k) == CELL_X ? num_x++ : num_o++;
-    	}
-
-           // Update score
-    if ((num_x == 0) && (num_o != 0))
-    {
-        score -= pow(10, num_o+p_3dd);
-        if(num_o == 4)
-            score -= infinity;
-    }
-    else if ((num_x != 0) && (num_o == 0))
-    {
-        score += pow(10, num_x+p_3dd);
-        if(num_x == 4)
-            score += infinity;
-    }
-
-	   	// Check secondary diagonal
-	    num_x = 0;
-	    num_o = 0;
-        for(int k = 0; k<4; k++)
-    	{
-            // Checking how many X are there in each row
-            if(pState.at(i, k, 3-k) == CELL_X)
-            num_x++;
-            // Checking how many O are there in each column
-            if(pState.at(i, k, 3-k) == CELL_O)
-            num_o++;
-    		//pState.at(i, k, 3-k) == CELL_X ? num_x++ : num_o++;
-    	}
-
           // Update score
-    if ((num_x == 0) && (num_o != 0))
-    {
-        score -= pow(10, num_o+p_3dd);
-        if(num_o == 4)
-            score -= infinity;
-    }
-    else if ((num_x != 0) && (num_o == 0))
-    {
-        score += pow(10, num_x+p_3dd);
-        if(num_x == 4)
-            score += infinity;
+          score = score + update(num_x, num_o);
+	    }
     }
 
-	}
+    // Make num again to zero so as to use again
+    num_o = 0;
+    num_x = 0;
 
-    //############################################################
-    //#######SCAN j-WISE##########################################
-    //############################################################
-    for(int j = 0; j<4; j++)
+
+
+
+
+    //### Column Wise Check for all the face ### //
+    //####################################### //
+    for(int i = 0; i<4; i++)
     {
 		// Check every row
-	    for(int i = 0; i<4; i++)
+	    for(int j = 0; j<4; j++)
 	    {
             num_x = 0;
             num_o = 0;
 	        for(int k = 0; k<4; k++)
 	    	{
                 // Checking how many X are there in each row
-                if(pState.at(i, j, k) == CELL_X)
+                if(pState.at(i, k, j) == CELL_X)
                 num_x++;
                 // Checking how many O are there in each column
-                if(pState.at(i, j, k) == CELL_O)
+                if(pState.at(i, k, j) == CELL_O)
                 num_o++;
-	    		//pState.at(i, j, k) == CELL_X ? num_x++ : num_o++;
 	    	}
 
-              // Update score
-    if ((num_x == 0) && (num_o != 0))
-    {
-        score -= pow(10, num_o+p_3dd);
-        if(num_o == 4)
-            score -= infinity;
-    }
-    else if ((num_x != 0) && (num_o == 0))
-    {
-        score += pow(10, num_x+p_3dd);
-        if(num_x == 4)
-            score += infinity;
-    }
+          // Update score
+          score = score + update(num_x, num_o);
+
 	    }
+    }
+
+    // Make num again to zero so as to use again
+    num_o = 0;
+    num_x = 0;
 
 
 
-	    // Check every column
-	    for(int k = 0; k<4; k++)
+
+
+
+
+    //### Check Face wise for all the face ### //
+    //####################################### //
+    for(int i = 0; i<4; i++)
+    {
+		// Check every row
+	    for(int j = 0; j<4; j++)
 	    {
             num_x = 0;
             num_o = 0;
-	        for(int i = 0; i<4; i++)
+	        for(int k = 0; k<4; k++)
 	    	{
                 // Checking how many X are there in each row
-                if(pState.at(i, j, k) == CELL_X)
+                if(pState.at(k, i, j) == CELL_X)
                 num_x++;
                 // Checking how many O are there in each column
-                if(pState.at(i, j, k) == CELL_O)
+                if(pState.at(k, i, j) == CELL_O)
                 num_o++;
-	    		//pState.at(i, j, k) == CELL_X ? num_x++ : num_o++;
 	    	}
-            // Update score
-            if ((num_x == 0) && (num_o != 0))
-            {
-                score -= pow(10, num_o+p_3dd);
-                if(num_o == 4)
-                    score -= infinity;
-            }
-            else if ((num_x != 0) && (num_o == 0))
-            {
-                score += pow(10, num_x+p_3dd);
-                if(num_x == 4)
-                    score += infinity;
-            }
-	    }
-
-
-
-	    // Check main diagonal
-	    num_x = 0;
-	    num_o = 0;
-        for(int i = 0; i<4; i++)
-    	{
-            // Checking how many X are there in each row
-            if(pState.at(i, j, i) == CELL_X)
-            num_x++;
-            // Checking how many O are there in each column
-            if(pState.at(i, j, i) == CELL_O)
-            num_o++;
-    		//pState.at(i, j, i) == CELL_X ? num_x++ : num_o++;
-    	}
 
           // Update score
-    if ((num_x == 0) && (num_o != 0))
-    {
-        score -= pow(10, num_o+p_3dd);
-        if(num_o == 4)
-            score -= infinity;
-    }
-    else if ((num_x != 0) && (num_o == 0))
-    {
-        score += pow(10, num_x+p_3dd);
-        if(num_x == 4)
-            score += infinity;
+          score = score + update(num_x, num_o);
+	    }
     }
 
-	   	// Check secondary diagonal
-	    num_x = 0;
-	    num_o = 0;
-        for(int i = 0; i<4; i++)
-    	{
-            // Checking how many X are there in each row
-            if(pState.at(i, j, 3-i) == CELL_X)
-            num_x++;
-            // Checking how many O are there in each column
-            if(pState.at(i, j, 3-i) == CELL_O)
-            num_o++;
-    		//pState.at(3-i, j, i) == CELL_X ? num_x++ : num_o++;
-    	}
-
-           // Update score
-    if ((num_x == 0) && (num_o != 0))
-    {
-        score -= pow(10, num_o+p_3dd);
-        if(num_o == 4)
-            score -= infinity;
-    }
-    else if ((num_x != 0) && (num_o == 0))
-    {
-        score += pow(10, num_x+p_3dd);
-        if(num_x == 4)
-            score += infinity;
-    }
-	}
-
-    //############################################################
-    //#######EVALUATE 3D DIAGONALS################################
-    //############################################################
-    //3D-Diagonal 1
-    num_x = 0;
+    // Make num again to zero so as to use again
     num_o = 0;
-	for(int i = 0; i<4; i++)
-	{
-        // Checking how many X are there in each row
+    num_x = 0;
+
+
+
+
+
+
+
+
+    //### Check 2D diagonals for all the face ### //
+    //####################################### //
+    for(int i = 0; i<4; i++)
+    {
+        // ------------------- Face 1 ---------------- //
+        // Check for left diagonal
+        for(int j = 0; j<4; j++)
+        {
+            // Checking how many X are there in diagonal
+            if(pState.at(i, j, j) == CELL_X)
+                num_x++;
+            // Checking how many O are there in diagonal
+            if(pState.at(i, j, j)== CELL_O)
+                num_o++;
+        }
+
+        // Update score
+        score = score + update(num_x, num_o);
+
+        // Make num again to zero so as to use again
+        num_o = 0;
+        num_x = 0;
+
+
+        // Check for right diagonal
+        for(int j = 0; j<4; j++)
+        {
+            // Checking how many X are there in diagonal
+            if(pState.at(i, j, 3-j) == CELL_X)
+                num_x++;
+            // Checking how many O are there in diagonal
+            if(pState.at(i, j, 3-j)== CELL_O)
+                num_o++;
+        }
+
+        // Update score
+        score = score + update(num_x, num_o);
+
+        // Make num again to zero so as to use again
+        num_o = 0;
+        num_x = 0;
+
+
+
+
+
+        // ------------------- Face 2 ---------------- //
+        // Check for left diagonal
+        for(int j = 0; j<4; j++)
+        {
+            // Checking how many X are there in diagonal
+            if(pState.at(j, i, j) == CELL_X)
+                num_x++;
+            // Checking how many O are there in diagonal
+            if(pState.at(j, i, j)== CELL_O)
+                num_o++;
+        }
+
+        // Update score
+        score = score + update(num_x, num_o);
+
+        // Make num again to zero so as to use again
+        num_o = 0;
+        num_x = 0;
+
+        // Check for right diagonal
+        for(int j = 0; j<4; j++)
+        {
+            // Checking how many X are there in diagonal
+            if(pState.at(j, i, 3-j) == CELL_X)
+                num_x++;
+            // Checking how many O are there in diagonal
+            if(pState.at(j, i, 3-j)== CELL_O)
+                num_o++;
+        }
+
+        // Update score
+        score = score + update(num_x, num_o);
+
+        // Make num again to zero so as to use again
+        num_o = 0;
+        num_x = 0;
+
+
+
+        // ------------------- Face 3 ---------------- //
+        // Check for left diagonal
+        for(int j = 0; j<4; j++)
+        {
+            // Checking how many X are there in diagonal
+            if(pState.at(j, j, i) == CELL_X)
+                num_x++;
+            // Checking how many O are there in diagonal
+            if(pState.at(j, j, i)== CELL_O)
+                num_o++;
+        }
+
+        // Update score
+        score = score + update(num_x, num_o);
+
+        // Make num again to zero so as to use again
+        num_o = 0;
+        num_x = 0;
+
+
+        // Check for right diagonal
+        for(int j = 0; j<4; j++)
+        {
+            // Checking how many X are there in diagonal
+            if(pState.at(j, j-3, i) == CELL_X)
+                num_x++;
+            // Checking how many O are there in diagonal
+            if(pState.at(j, j-3, i)== CELL_O)
+                num_o++;
+        }
+
+        // Update score
+        score = score + update(num_x, num_o);
+
+        // Make num again to zero so as to use again
+        num_o = 0;
+        num_x = 0;
+
+    }
+
+
+
+
+
+    //### Check 3D diagonals for all the face ### //
+    //####################################### //
+
+    // Diagonal 1
+    for(int i = 0; i<4; i++)
+    {
+        // Checking how many X are there in diagonal
         if(pState.at(i, i, i) == CELL_X)
-        num_x++;
-        // Checking how many O are there in each column
-        if(pState.at(i, i, i) == CELL_O)
-        num_o++;
-		//pState.at(i, i, i) == CELL_X ? num_x++ : num_o++;
-	}
-
+            num_x++;
+        // Checking how many O are there in diagonal
+        if(pState.at(i, i, i)== CELL_O)
+            num_o++;
+     }
 
     // Update score
-    if ((num_x == 0) && (num_o != 0))
-    {
-        score -= pow(10, num_o+p_3dd);
-        if(num_o == 4)
-            score -= infinity;
-    }
-    else if ((num_x != 0) && (num_o == 0))
-    {
-        score += pow(10, num_x+p_3dd);
-        if(num_x == 4)
-            score += infinity;
-    }
+    score = score + update(num_x, num_o);
 
-    //3D-Diagonal 2
-    num_x = 0;
+    // Make num again to zero so as to use again
     num_o = 0;
-	for(int i = 0; i<4; i++)
-	{
-        // Checking how many X are there in each row
-        if(pState.at(3-i, i, i) == CELL_X)
-        num_x++;
-        // Checking how many O are there in each column
-        if(pState.at(3-i, i, i) == CELL_O)
-        num_o++;
-		//pState.at(3-i, i, i) == CELL_X ? num_x++ : num_o++;
-	}
-
-    // Update score
-    if ((num_x == 0) && (num_o != 0))
-    {
-        score -= pow(10, num_o+p_3dd);
-        if(num_o == 4)
-            score -= infinity;
-    }
-    else if ((num_x != 0) && (num_o == 0))
-    {
-        score += pow(10, num_x+p_3dd);
-        if(num_x == 4)
-            score += infinity;
-    }
-
-    //3D-Diagonal 3
     num_x = 0;
-    num_o = 0;
-	for(int i = 0; i<4; i++)
-	{
-        // Checking how many X are there in each row
-        if(pState.at(i, 3-i, i) == CELL_X)
-        num_x++;
-        // Checking how many O are there in each column
-        if(pState.at(i, 3-i, i) == CELL_O)
-        num_o++;
-		//pState.at(i, 3-i, i) == CELL_X ? num_x++ : num_o++;
-	}
+
+
+
+    // Diagonal 2
+    for(int i = 0; i<4; i++)
+    {
+        // Checking how many X are there in diagonal
+        if(pState.at(3 - i, i, i) == CELL_X)
+            num_x++;
+        // Checking how many O are there in diagonal
+        if(pState.at(3 - i, i, i)== CELL_O)
+            num_o++;
+     }
 
     // Update score
-    if ((num_x == 0) && (num_o != 0))
-    {
-        score -= pow(10, num_o+p_3dd);
-        if(num_o == 4)
-            score -= infinity;
-    }
-    else if ((num_x != 0) && (num_o == 0))
-    {
-        score += pow(10, num_x+p_3dd);
-        if(num_x == 4)
-            score += infinity;
-    }
+    score = score + update(num_x, num_o);
 
-    //3D-Diagonal 4
+    // Make num again to zero so as to use again
+    num_o = 0;
     num_x = 0;
-    num_o = 0;
-	for(int i = 0; i<4; i++)
-	{
-        // Checking how many X are there in each row
-        if(pState.at(i, i, 3-i) == CELL_X)
-        num_x++;
-        // Checking how many O are there in each column
-        if(pState.at(i, i, 3-i) == CELL_O)
-        num_o++;
-		//pState.at(i, i, 3-i) == CELL_X ? num_x++ : num_o++;
-	}
+
+
+    // Diagonal 3
+    for(int i = 0; i<4; i++)
+    {
+        // Checking how many X are there in diagonal
+        if(pState.at(i, 3 - i, i) == CELL_X)
+            num_x++;
+        // Checking how many O are there in diagonal
+        if(pState.at(i, 3 - i, i)== CELL_O)
+            num_o++;
+     }
 
     // Update score
-    if ((num_x == 0) && (num_o != 0))
+    score = score + update(num_x, num_o);
+
+    // Make num again to zero so as to use again
+    num_o = 0;
+    num_x = 0;
+
+
+    // Diagonal 4
+    for(int i = 0; i<4; i++)
     {
-        score -= pow(10, num_o+p_3dd);
-        if(num_o == 4)
-            score -= infinity;
-    }
-    else if ((num_x != 0) && (num_o == 0))
-    {
-        score += pow(10, num_x+p_3dd);
-        if(num_x == 4)
-            score += infinity;
-    }
+        // Checking how many X are there in diagonal
+        if(pState.at(i, i, 3 - i) == CELL_X)
+            num_x++;
+        // Checking how many O are there in diagonal
+        if(pState.at(i, i, 3 - i)== CELL_O)
+            num_o++;
+     }
+
+    // Update score
+    score = score + update(num_x, num_o);
+
 
 
 	// This is the final score of the current table
 	return score;
+}
+
+
+
+
+double update(int num_x, int num_o)
+{
+    double score = 0;
+
+    // Update score
+    if ((num_x != 0) && (num_o == 0))
+    {
+        score = score + pow(10, num_x);
+        if(num_x == 4)
+            score = score + infinity;
+    }
+
+    else if ((num_o != 0) && (num_x == 0))
+    {
+        score = score - pow(10, num_x);
+        if(num_x == 4)
+            score = score - infinity;
+    }
+    return score;
 }
 
 
